@@ -1,0 +1,5 @@
+[["bright-site-1" :site/url "https://www.brighthorizons.com" 1 :add]
+ ["bright-site-1" :site/checked-at "2026-07-18" 1 :add]
+ ["bright-site-1" :site/http-status 200 1 :add]
+ ["bright-site-1" :site/title "Welcome to Bright Horizons | Bright Horizons&reg;" 1 :add]
+ ["bright-site-1" :site/description "Look to us for innovative child care &amp; early education for families, solutions for employers, benefits for employees…all trusted by families and employers for more than 30 years." 1 :add]]
