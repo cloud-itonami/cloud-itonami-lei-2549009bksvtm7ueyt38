@@ -1,0 +1,726 @@
+;; Verified public-register citations for the legal entity archived by this repository.
+;;
+;; Every row is checked live by tools/verify_citations.cljs:
+;;   * GET :cite/url must answer HTTP 2xx
+;;   * :cite/expect-substring must appear in the response body
+;;
+;; A URL that cannot be fetched, or whose body no longer carries the claim, is a
+;; DRIFT and fails the gate. Nothing is recorded here that was not retrieved
+;; (authoring fetch: 2026-08-22, GLEIF golden copy publishDate 2026-08-22).
+;;
+;; FOUR independent sources are cited, not one:
+;;   * GLEIF, the global LEI system (the entity record, its ISIN mapping, its
+;;     direct-children page, both parent reporting exceptions, the RA000602
+;;     entry in the registration-authorities registry, the XTIQ entry in the
+;;     entity-legal-forms registry, the LEI record and issuer record of the
+;;     managing LOU, and the SEPARATE LEI record of the operating subsidiary
+;;     whose name appears on the archived Terms of Use -- see below)
+;;   * the United States, via the SEC's EDGAR submissions API, the company-tickers
+;;     file, the XBRL companyfacts API, and the inline-XBRL cover page of the
+;;     FY2025 Form 10-K (the NYSE filer, CIK 0001437578, a large accelerated
+;;     filer -- 10-K, 10-Q, 8-K, DEF 14A)
+;;   * the State of Delaware, via the Division of Corporations portal at
+;;     corp.delaware.gov -- the very register RA000602 names (portal only; see
+;;     below for why no per-entity row exists)
+;;   * the issuer itself, at its corporate home page (schema.org Corporation
+;;     block) and at the exact Terms-of-Use page this repository archives in
+;;     80-data/public/tos.journal.edn
+;;
+;; A YOUNG LEI ON A 2008 ENTITY. GLEIF issued this LEI on 2025-12-10 (row
+;; gleif-initial-registration) -- the record is eight months old at authoring
+;; and has never been renewed (row gleif-next-renewal). The ENTITY is older:
+;; GLEIF's creationDate is 2008-05-09 (row gleif-creation-date). EDGAR agrees
+;; from the other side without quoting GLEIF: the filer's one formerName is
+;; BRIGHT HORIZONS SOLUTIONS CORP with a 2008-06-11 date (row
+;; sec-former-name-2008), and the 10-K narrates the same year -- "listed on
+;; Nasdaq from 1998 to May 2008 when we were acquired and went private" (row
+;; sec-10k-went-private-2008), then the 2013-01-30 IPO onto the NYSE under BFAM
+;; (row sec-10k-ipo-nyse). The 2008 corporation that holds this LEI is the
+;; going-private vehicle, not the 1986 founding company.
+;;
+;; HOW GLEIF AND DELAWARE ARE LINKED -- BY SHARED KEY, RESOLVED ONE WAY ONLY.
+;; GLEIF names RA000602 (Division of Corporations, Department of State,
+;; Delaware) as both register of record and validation authority, and records
+;; registeredAs 4548355 and validatedAs 4548355 -- the Delaware file number
+;; (rows gleif-registered-as, gleif-validated-as). The same digits reappear
+;; inside GLEIF's OpenCorporates pointer ocid us_de/4548355 (row gleif-ocid).
+;; Delaware exposes NO stable public per-entity URL: the ICIS entity search at
+;; icis.corp.delaware.gov is form-gated. So the file number can be READ OUT of
+;; GLEIF but not RESOLVED at the register itself by this gate -- the
+;; corp.delaware.gov row is :definition (the register exists, and its own page
+;; points at ICIS), not :identity (the register names this entity).
+;;
+;; HOW GLEIF AND THE SEC ARE LINKED -- BY ATTRIBUTES, NOT BY KEY. EDGAR carries
+;; "lei":null for this filer (row sec-lei-null, which goes red the day EDGAR
+;; starts printing the LEI, at which point a direct-key row should replace it).
+;; EDGAR's submissions API ALSO carries stateOfIncorporation "" -- EMPTY (row
+;; sec-state-of-inc-empty). The submissions API therefore cannot corroborate
+;; GLEIF's jurisdiction US-DE. The 10-K cover page CAN: its inline-XBRL tag
+;; dei:EntityIncorporationStateCountryCode reads Delaware (rows
+;; sec-10k-inc-state-tag, sec-10k-inc-state-value). Two SEC surfaces, one of
+;; them blank -- the catalog cites the one that answers and records that the
+;; other does not. The remaining links are attributes in agreement: the exact
+;; legal name (row sec-name), the EIN 80-0188269 printed both in the
+;; submissions API without its hyphen (row sec-ein) and on the 10-K cover with
+;; it (row sec-10k-ein), and the headquarters address below.
+;;
+;; ONE ADDRESS, THREE REGISTERS, AND A REGISTERED AGENT. GLEIF's headquarters
+;; address is 2 Wells Avenue, Newton, US-MA 02459 (rows gleif-hq-*); EDGAR's
+;; business AND mailing address is 2 WELLS AVENUE, NEWTON, MA 02459 (rows
+;; sec-street, sec-city, sec-state, sec-zip); the 10-K cover tags the same
+;; street (row sec-10k-address); the issuer's own home page carries it in a
+;; schema.org Corporation block with legalName, locality, region, postal code
+;; and telephone (rows issuer-home-*). GLEIF's LEGAL address is different and
+;; is not the company: C/O CORPORATION SERVICE COMPANY, 251 LITTLE FALLS DRIVE,
+;; WILMINGTON DE 19808 (rows gleif-legal-*) -- the registered agent CSC, an
+;; address shared with a large share of Delaware registrants (the managing LOU
+;; below uses the same agent). A reader who joins on GLEIF's legal address
+;; joins on the agent, not on the company. blueprint.edn records jurisdiction
+;; US-MA: that is where the company SITS (GLEIF hq region, EDGAR state), not
+;; where it is INCORPORATED (GLEIF jurisdiction US-DE, 10-K cover Delaware).
+;; Massachusetts' own foreign-corporation register (corp.sec.state.ma.us) is
+;; form-gated, so no Massachusetts-register row exists.
+;;
+;; THE TERMS OF USE NAME A DIFFERENT LEGAL ENTITY. The archived page states
+;; that its content "is owned or controlled by Bright Horizons Family Solutions
+;; LLC" (row issuer-tos-llc-owner) -- the LLC, not the Inc. The LLC is a
+;; separate legal person with its OWN LEI, 254900BHOU40CFNXWQ75, a Delaware
+;; limited liability company (legal form HZEH) created 1998-04-27 with Delaware
+;; file number 2888832, headquartered at the same 2 WELLS AVENUE and managed by
+;; the same LOU (rows llc-gleif-*). The 10-K ties the two together in the
+;; Inc.'s own words: "Bright Horizons Family Solutions LLC (the Borrower), the
+;; Company's wholly-owned subsidiary" (row sec-10k-llc-subsidiary). GLEIF does
+;; NOT tie them: the LLC's direct-parent reporting exception still reads NO_LEI
+;; (row llc-gleif-parent-exception-no-lei) -- true when the LLC registered in
+;; 2017, false since 2025-12-10 when the parent obtained this LEI -- and the
+;; LLC record was last updated on 2026-08-21 without correcting it. GLEIF's
+;; relationship graph therefore shows no edge between parent and subsidiary
+;; even though both nodes exist; the edge is asserted by the SEC filing only.
+;; That row goes red the day GLEIF records the relationship, which is the
+;; correct outcome: a stale-exception row must not outlive the exception.
+;;
+;; WHAT IS DELIBERATELY NOT CITED. GLEIF's ISIN mapping for this LEI is EMPTY
+;; (row gleif-isin-empty, total 0) although the common stock trades on the
+;; NYSE as BFAM; the ISIN is therefore not asserted here -- a ticker is not an
+;; ISIN and GLEIF has not mapped one. The Inc. reports NO direct or ultimate
+;; accounting-consolidation parent (reason NO_KNOWN_PERSON, rows
+;; gleif-*-parent-exception) and GLEIF lists zero direct children (row
+;; gleif-children-empty) -- the LLC above is not listed as a child for the
+;; reason just given. nyse.com's quote page renders client-side and carries
+;; the symbol only inside a script config, so it is not cited as a register.
+;;
+;; Rows carry :cite/row-kind so a reader can tell what each one proves:
+;;   :identity   -- the register names THIS entity (key-bearing claim)
+;;   :attribute  -- a fact about the entity, corroborating but not identifying
+;;   :definition -- the register/code/authority exists and is what GLEIF says
+;;
+;; Run the gate:   nbb tools/verify_citations.cljs facts/catalog.edn --min 20
+
+{:catalog/entity-lei "2549009BKSVTM7UEYT38"
+ :catalog/entity-name "BRIGHT HORIZONS FAMILY SOLUTIONS INC."
+ :catalog/authoring-fetch-date "2026-08-22"
+ :catalog/sources
+ {:gleif    {:name "Global Legal Entity Identifier Foundation" :base "https://api.gleif.org/api/v1/"}
+  :sec      {:name "U.S. Securities and Exchange Commission -- EDGAR" :base "https://data.sec.gov/ https://www.sec.gov/"}
+  :delaware {:name "Delaware Division of Corporations (RA000602)" :base "https://corp.delaware.gov/"}
+  :issuer   {:name "Bright Horizons Family Solutions Inc. (own web presence)" :base "https://www.brighthorizons.com/"}}
+ :catalog/entries
+ [
+  ;; ── GLEIF, the entity record ──────────────────────────────────────────
+  {:cite/id "gleif-lei"
+   :cite/authority :gleif
+   :cite/row-kind :identity
+   :cite/url "https://api.gleif.org/api/v1/lei-records/2549009BKSVTM7UEYT38"
+   :cite/expect-substring "\"lei\":\"2549009BKSVTM7UEYT38\""
+   :cite/claim "GLEIF issues LEI 2549009BKSVTM7UEYT38."}
+  {:cite/id "gleif-legal-name"
+   :cite/authority :gleif
+   :cite/row-kind :identity
+   :cite/url "https://api.gleif.org/api/v1/lei-records/2549009BKSVTM7UEYT38"
+   :cite/expect-substring "\"name\":\"BRIGHT HORIZONS FAMILY SOLUTIONS INC.\""
+   :cite/claim "GLEIF records the legal name BRIGHT HORIZONS FAMILY SOLUTIONS INC. (en). EDGAR prints the identical string (row sec-name)."}
+  {:cite/id "gleif-other-names-empty"
+   :cite/authority :gleif
+   :cite/row-kind :attribute
+   :cite/url "https://api.gleif.org/api/v1/lei-records/2549009BKSVTM7UEYT38"
+   :cite/expect-substring "\"otherNames\":[]"
+   :cite/claim "GLEIF records no other or previous legal names. EDGAR, by contrast, keeps one 2008 former name (row sec-former-name-2008) -- GLEIF's record starts in 2025 and carries no history."}
+  {:cite/id "gleif-registered-as"
+   :cite/authority :gleif
+   :cite/row-kind :identity
+   :cite/url "https://api.gleif.org/api/v1/lei-records/2549009BKSVTM7UEYT38"
+   :cite/expect-substring "\"registeredAs\":\"4548355\""
+   :cite/claim "Delaware file number 4548355 -- the register-of-record key. Delaware's ICIS search is form-gated, so this key is read out of GLEIF but cannot be resolved at the register by this gate (see header)."}
+  {:cite/id "gleif-validated-as"
+   :cite/authority :gleif
+   :cite/row-kind :identity
+   :cite/url "https://api.gleif.org/api/v1/lei-records/2549009BKSVTM7UEYT38"
+   :cite/expect-substring "\"validatedAs\":\"4548355\""
+   :cite/claim "GLEIF validated the record against the SAME Delaware file number, not merely recorded it."}
+  {:cite/id "gleif-ocid"
+   :cite/authority :gleif
+   :cite/row-kind :identity
+   :cite/url "https://api.gleif.org/api/v1/lei-records/2549009BKSVTM7UEYT38"
+   :cite/expect-substring "\"ocid\":\"us_de\\/4548355\""
+   :cite/claim "GLEIF's OpenCorporates pointer us_de/4548355 -- the same Delaware file number, a third appearance of the one key."}
+  {:cite/id "gleif-registered-at-ra"
+   :cite/authority :gleif
+   :cite/row-kind :identity
+   :cite/url "https://api.gleif.org/api/v1/lei-records/2549009BKSVTM7UEYT38"
+   :cite/expect-substring "\"id\":\"RA000602\""
+   :cite/claim "Register of record and validation authority are both RA000602 (resolved in rows ra-de-*)."}
+  {:cite/id "gleif-jurisdiction"
+   :cite/authority :gleif
+   :cite/row-kind :attribute
+   :cite/url "https://api.gleif.org/api/v1/lei-records/2549009BKSVTM7UEYT38"
+   :cite/expect-substring "\"jurisdiction\":\"US-DE\""
+   :cite/claim "Legal jurisdiction US-DE. EDGAR's submissions API is BLANK on this (row sec-state-of-inc-empty); the 10-K cover page says Delaware (row sec-10k-inc-state-value). blueprint.edn's US-MA is the headquarters region, not the jurisdiction."}
+  {:cite/id "gleif-legal-form"
+   :cite/authority :gleif
+   :cite/row-kind :attribute
+   :cite/url "https://api.gleif.org/api/v1/lei-records/2549009BKSVTM7UEYT38"
+   :cite/expect-substring "\"id\":\"XTIQ\""
+   :cite/claim "Entity legal form XTIQ (resolved in rows elf-xtiq-*: Delaware Corporation)."}
+  {:cite/id "gleif-category"
+   :cite/authority :gleif
+   :cite/row-kind :attribute
+   :cite/url "https://api.gleif.org/api/v1/lei-records/2549009BKSVTM7UEYT38"
+   :cite/expect-substring "\"category\":\"GENERAL\""
+   :cite/claim "Entity category GENERAL -- not a fund, branch or sole proprietor."}
+  {:cite/id "gleif-entity-status"
+   :cite/authority :gleif
+   :cite/row-kind :attribute
+   :cite/url "https://api.gleif.org/api/v1/lei-records/2549009BKSVTM7UEYT38"
+   :cite/expect-substring "\"status\":\"ACTIVE\""
+   :cite/claim "Entity status ACTIVE."}
+  {:cite/id "gleif-creation-date"
+   :cite/authority :gleif
+   :cite/row-kind :attribute
+   :cite/url "https://api.gleif.org/api/v1/lei-records/2549009BKSVTM7UEYT38"
+   :cite/expect-substring "\"creationDate\":\"2008-05-09T00:00:00Z\""
+   :cite/claim "Entity created 2008-05-09 -- the going-private vehicle. EDGAR's former-name date 2008-06-11 (row sec-former-name-2008) and the 10-K's 'May 2008 ... went private' (row sec-10k-went-private-2008) agree on the year from the other side."}
+  {:cite/id "gleif-bic-null"
+   :cite/authority :gleif
+   :cite/row-kind :attribute
+   :cite/url "https://api.gleif.org/api/v1/lei-records/2549009BKSVTM7UEYT38"
+   :cite/expect-substring "\"bic\":null"
+   :cite/claim "No BIC mapped -- not a bank."}
+
+  ;; ── GLEIF, the registration block ─────────────────────────────────────
+  {:cite/id "gleif-registration-issued"
+   :cite/authority :gleif
+   :cite/row-kind :attribute
+   :cite/url "https://api.gleif.org/api/v1/lei-records/2549009BKSVTM7UEYT38"
+   :cite/expect-substring "\"status\":\"ISSUED\""
+   :cite/claim "Registration status ISSUED (not LAPSED / RETIRED)."}
+  {:cite/id "gleif-initial-registration"
+   :cite/authority :gleif
+   :cite/row-kind :attribute
+   :cite/url "https://api.gleif.org/api/v1/lei-records/2549009BKSVTM7UEYT38"
+   :cite/expect-substring "\"initialRegistrationDate\":\"2025-12-10T16:35:25Z\""
+   :cite/claim "LEI first issued 2025-12-10 -- a young record on a 2008 entity (see header)."}
+  {:cite/id "gleif-next-renewal"
+   :cite/authority :gleif
+   :cite/row-kind :attribute
+   :cite/url "https://api.gleif.org/api/v1/lei-records/2549009BKSVTM7UEYT38"
+   :cite/expect-substring "\"nextRenewalDate\":\"2026-12-10T16:35:25Z\""
+   :cite/claim "First renewal due 2026-12-10. This row goes red at the first renewal, by design -- it pins the record's first year."}
+  {:cite/id "gleif-corroboration"
+   :cite/authority :gleif
+   :cite/row-kind :attribute
+   :cite/url "https://api.gleif.org/api/v1/lei-records/2549009BKSVTM7UEYT38"
+   :cite/expect-substring "\"corroborationLevel\":\"FULLY_CORROBORATED\""
+   :cite/claim "Corroboration level FULLY_CORROBORATED -- the LOU checked the Delaware record."}
+  {:cite/id "gleif-conformity"
+   :cite/authority :gleif
+   :cite/row-kind :attribute
+   :cite/url "https://api.gleif.org/api/v1/lei-records/2549009BKSVTM7UEYT38"
+   :cite/expect-substring "\"conformityFlag\":\"CONFORMING\""
+   :cite/claim "Conformity flag CONFORMING -- the record meets GLEIF's current data-quality rules, including the parent exceptions below."}
+  {:cite/id "gleif-managing-lou"
+   :cite/authority :gleif
+   :cite/row-kind :attribute
+   :cite/url "https://api.gleif.org/api/v1/lei-records/2549009BKSVTM7UEYT38"
+   :cite/expect-substring "\"managingLou\":\"5493001KJTIIGC8Y1R12\""
+   :cite/claim "Managing LOU 5493001KJTIIGC8Y1R12 (resolved in rows lou-*: Bloomberg Finance L.P.)."}
+  {:cite/id "gleif-other-validation-empty"
+   :cite/authority :gleif
+   :cite/row-kind :attribute
+   :cite/url "https://api.gleif.org/api/v1/lei-records/2549009BKSVTM7UEYT38"
+   :cite/expect-substring "\"otherValidationAuthorities\":[]"
+   :cite/claim "No other validation authority -- Massachusetts' foreign-corporation register is not recorded by GLEIF, so no Massachusetts row is possible from GLEIF either."}
+
+  ;; ── GLEIF, addresses ──────────────────────────────────────────────────
+  {:cite/id "gleif-legal-address-agent"
+   :cite/authority :gleif
+   :cite/row-kind :attribute
+   :cite/url "https://api.gleif.org/api/v1/lei-records/2549009BKSVTM7UEYT38"
+   :cite/expect-substring "\"addressLines\":[\"C\\/O CORPORATION SERVICE COMPANY\",\"251 LITTLE FALLS DRIVE\"]"
+   :cite/claim "Legal address is C/O Corporation Service Company, 251 Little Falls Drive -- the registered agent, not the company. Do not join on it (see header)."}
+  {:cite/id "gleif-legal-city"
+   :cite/authority :gleif
+   :cite/row-kind :attribute
+   :cite/url "https://api.gleif.org/api/v1/lei-records/2549009BKSVTM7UEYT38"
+   :cite/expect-substring "\"city\":\"WILMINGTON\""
+   :cite/claim "Legal address city WILMINGTON (Delaware) -- the agent's city."}
+  {:cite/id "gleif-legal-postal"
+   :cite/authority :gleif
+   :cite/row-kind :attribute
+   :cite/url "https://api.gleif.org/api/v1/lei-records/2549009BKSVTM7UEYT38"
+   :cite/expect-substring "\"postalCode\":\"19808\""
+   :cite/claim "Legal address postal code 19808 -- the agent's."}
+  {:cite/id "gleif-hq-street"
+   :cite/authority :gleif
+   :cite/row-kind :attribute
+   :cite/url "https://api.gleif.org/api/v1/lei-records/2549009BKSVTM7UEYT38"
+   :cite/expect-substring "\"addressLines\":[\"2 Wells Avenue\"]"
+   :cite/claim "Headquarters street 2 Wells Avenue. EDGAR (row sec-street), the 10-K cover (row sec-10k-address) and the issuer's schema.org block (row issuer-home-street) carry the same street."}
+  {:cite/id "gleif-hq-city"
+   :cite/authority :gleif
+   :cite/row-kind :attribute
+   :cite/url "https://api.gleif.org/api/v1/lei-records/2549009BKSVTM7UEYT38"
+   :cite/expect-substring "\"city\":\"Newton\""
+   :cite/claim "Headquarters city Newton. EDGAR and the issuer agree (rows sec-city, issuer-home-locality)."}
+  {:cite/id "gleif-hq-region"
+   :cite/authority :gleif
+   :cite/row-kind :attribute
+   :cite/url "https://api.gleif.org/api/v1/lei-records/2549009BKSVTM7UEYT38"
+   :cite/expect-substring "\"region\":\"US-MA\""
+   :cite/claim "Headquarters region US-MA -- the source of blueprint.edn's :company/jurisdiction value, which is a location, not the legal jurisdiction (row gleif-jurisdiction)."}
+  {:cite/id "gleif-hq-postal"
+   :cite/authority :gleif
+   :cite/row-kind :attribute
+   :cite/url "https://api.gleif.org/api/v1/lei-records/2549009BKSVTM7UEYT38"
+   :cite/expect-substring "\"postalCode\":\"02459\""
+   :cite/claim "Headquarters postal code 02459. EDGAR and the issuer agree (rows sec-zip, issuer-home-postal)."}
+
+  ;; ── GLEIF, related records ────────────────────────────────────────────
+  {:cite/id "gleif-isin-empty"
+   :cite/authority :gleif
+   :cite/row-kind :attribute
+   :cite/url "https://api.gleif.org/api/v1/lei-records/2549009BKSVTM7UEYT38/isins"
+   :cite/expect-substring "\"total\":0"
+   :cite/claim "GLEIF's ISIN mapping for this LEI is empty (total 0). No ISIN is asserted in this repository for that reason, although the stock trades on the NYSE (rows sec-exchange, sec-10k-exchange). Goes red when GLEIF maps one -- then add the ISIN row."}
+  {:cite/id "gleif-children-empty"
+   :cite/authority :gleif
+   :cite/row-kind :attribute
+   :cite/url "https://api.gleif.org/api/v1/lei-records/2549009BKSVTM7UEYT38/direct-children"
+   :cite/expect-substring "\"total\":0"
+   :cite/claim "GLEIF lists zero direct children -- not because the Inc. has none (the 10-K names a wholly-owned LLC, row sec-10k-llc-subsidiary) but because the LLC's record still reports its parent as NO_LEI (row llc-gleif-parent-exception-no-lei)."}
+  {:cite/id "gleif-direct-parent-exception"
+   :cite/authority :gleif
+   :cite/row-kind :attribute
+   :cite/url "https://api.gleif.org/api/v1/lei-records/2549009BKSVTM7UEYT38/direct-parent-reporting-exception"
+   :cite/expect-substring "\"category\":\"DIRECT_ACCOUNTING_CONSOLIDATION_PARENT\""
+   :cite/claim "A direct-parent reporting exception exists -- no direct accounting-consolidation parent is reported."}
+  {:cite/id "gleif-direct-parent-reason"
+   :cite/authority :gleif
+   :cite/row-kind :attribute
+   :cite/url "https://api.gleif.org/api/v1/lei-records/2549009BKSVTM7UEYT38/direct-parent-reporting-exception"
+   :cite/expect-substring "\"reason\":\"NO_KNOWN_PERSON\""
+   :cite/claim "Reason NO_KNOWN_PERSON -- consistent with a widely held NYSE-listed company (row sec-category: large accelerated filer)."}
+  {:cite/id "gleif-ultimate-parent-exception"
+   :cite/authority :gleif
+   :cite/row-kind :attribute
+   :cite/url "https://api.gleif.org/api/v1/lei-records/2549009BKSVTM7UEYT38/ultimate-parent-reporting-exception"
+   :cite/expect-substring "\"category\":\"ULTIMATE_ACCOUNTING_CONSOLIDATION_PARENT\""
+   :cite/claim "An ultimate-parent reporting exception exists."}
+  {:cite/id "gleif-ultimate-parent-reason"
+   :cite/authority :gleif
+   :cite/row-kind :attribute
+   :cite/url "https://api.gleif.org/api/v1/lei-records/2549009BKSVTM7UEYT38/ultimate-parent-reporting-exception"
+   :cite/expect-substring "\"reason\":\"NO_KNOWN_PERSON\""
+   :cite/claim "Reason NO_KNOWN_PERSON for the ultimate parent as well -- the Inc. is the top of its own tree."}
+
+  ;; ── GLEIF registries: the codes the record uses ───────────────────────
+  {:cite/id "ra-de-code"
+   :cite/authority :gleif
+   :cite/row-kind :definition
+   :cite/url "https://api.gleif.org/api/v1/registration-authorities/RA000602"
+   :cite/expect-substring "\"code\":\"RA000602\""
+   :cite/claim "RA000602 exists in GLEIF's registration-authorities registry."}
+  {:cite/id "ra-de-organisation"
+   :cite/authority :gleif
+   :cite/row-kind :definition
+   :cite/url "https://api.gleif.org/api/v1/registration-authorities/RA000602"
+   :cite/expect-substring "\"internationalOrganizationName\":\"Division of Corporations, Department of State\""
+   :cite/claim "RA000602 is the Division of Corporations, Department of State."}
+  {:cite/id "ra-de-jurisdiction"
+   :cite/authority :gleif
+   :cite/row-kind :definition
+   :cite/url "https://api.gleif.org/api/v1/registration-authorities/RA000602"
+   :cite/expect-substring "\"jurisdiction\":\"Delaware\""
+   :cite/claim "RA000602's jurisdiction is Delaware -- matching the entity's US-DE (row gleif-jurisdiction)."}
+  {:cite/id "ra-de-website"
+   :cite/authority :gleif
+   :cite/row-kind :definition
+   :cite/url "https://api.gleif.org/api/v1/registration-authorities/RA000602"
+   :cite/expect-substring "\"website\":\"https:\\/\\/corp.delaware.gov\\/\""
+   :cite/claim "GLEIF records corp.delaware.gov as RA000602's website -- the URL fetched in rows delaware-*."}
+  {:cite/id "elf-xtiq-code"
+   :cite/authority :gleif
+   :cite/row-kind :definition
+   :cite/url "https://api.gleif.org/api/v1/entity-legal-forms/XTIQ"
+   :cite/expect-substring "\"code\":\"XTIQ\""
+   :cite/claim "XTIQ exists in GLEIF's entity-legal-forms registry (ISO 20275)."}
+  {:cite/id "elf-xtiq-name"
+   :cite/authority :gleif
+   :cite/row-kind :definition
+   :cite/url "https://api.gleif.org/api/v1/entity-legal-forms/XTIQ"
+   :cite/expect-substring "\"localName\":\"Corporation\""
+   :cite/claim "XTIQ means Corporation."}
+  {:cite/id "elf-xtiq-subdivision"
+   :cite/authority :gleif
+   :cite/row-kind :definition
+   :cite/url "https://api.gleif.org/api/v1/entity-legal-forms/XTIQ"
+   :cite/expect-substring "\"subdivisionCode\":\"US-DE\""
+   :cite/claim "XTIQ is the Delaware corporation form -- a second, independent code agreeing on Delaware."}
+  {:cite/id "elf-xtiq-active"
+   :cite/authority :gleif
+   :cite/row-kind :definition
+   :cite/url "https://api.gleif.org/api/v1/entity-legal-forms/XTIQ"
+   :cite/expect-substring "\"status\":\"ACTV\""
+   :cite/claim "The XTIQ code is active in the ELF list."}
+  {:cite/id "lou-lei"
+   :cite/authority :gleif
+   :cite/row-kind :definition
+   :cite/url "https://api.gleif.org/api/v1/lei-records/5493001KJTIIGC8Y1R12"
+   :cite/expect-substring "\"lei\":\"5493001KJTIIGC8Y1R12\""
+   :cite/claim "The managing LOU has its own LEI record."}
+  {:cite/id "lou-name"
+   :cite/authority :gleif
+   :cite/row-kind :definition
+   :cite/url "https://api.gleif.org/api/v1/lei-records/5493001KJTIIGC8Y1R12"
+   :cite/expect-substring "\"name\":\"Bloomberg Finance L.P.\""
+   :cite/claim "The managing LOU is Bloomberg Finance L.P."}
+  {:cite/id "lou-issuer-accredited"
+   :cite/authority :gleif
+   :cite/row-kind :definition
+   :cite/url "https://api.gleif.org/api/v1/lei-issuers/5493001KJTIIGC8Y1R12"
+   :cite/expect-substring "\"accreditationDate\":\"2017-04-13T00:00:00+00:00\""
+   :cite/claim "Bloomberg Finance L.P. is a GLEIF-accredited LEI issuer since 2017-04-13."}
+
+  ;; ── GLEIF, the operating subsidiary named on the Terms of Use ─────────
+  {:cite/id "llc-gleif-lei"
+   :cite/authority :gleif
+   :cite/row-kind :definition
+   :cite/url "https://api.gleif.org/api/v1/lei-records/254900BHOU40CFNXWQ75"
+   :cite/expect-substring "\"lei\":\"254900BHOU40CFNXWQ75\""
+   :cite/claim "A separate LEI exists for the LLC the Terms of Use name (row issuer-tos-llc-owner). This row is :definition -- it identifies a DIFFERENT entity, cited so a reader does not merge the two."}
+  {:cite/id "llc-gleif-name"
+   :cite/authority :gleif
+   :cite/row-kind :definition
+   :cite/url "https://api.gleif.org/api/v1/lei-records/254900BHOU40CFNXWQ75"
+   :cite/expect-substring "\"name\":\"BRIGHT HORIZONS FAMILY SOLUTIONS LLC\""
+   :cite/claim "That LEI's legal name is BRIGHT HORIZONS FAMILY SOLUTIONS LLC -- same words as the Inc. up to the suffix."}
+  {:cite/id "llc-gleif-registered-as"
+   :cite/authority :gleif
+   :cite/row-kind :definition
+   :cite/url "https://api.gleif.org/api/v1/lei-records/254900BHOU40CFNXWQ75"
+   :cite/expect-substring "\"registeredAs\":\"2888832\""
+   :cite/claim "The LLC's Delaware file number is 2888832 -- different from the Inc.'s 4548355 (row gleif-registered-as). Two registrations at the same register."}
+  {:cite/id "llc-gleif-creation-date"
+   :cite/authority :gleif
+   :cite/row-kind :definition
+   :cite/url "https://api.gleif.org/api/v1/lei-records/254900BHOU40CFNXWQ75"
+   :cite/expect-substring "\"creationDate\":\"1998-04-27T00:00:00Z\""
+   :cite/claim "The LLC dates from 1998-04-27 -- the year the 10-K says the business was first listed on Nasdaq (row sec-10k-went-private-2008). The subsidiary is older than its parent."}
+  {:cite/id "llc-gleif-legal-form"
+   :cite/authority :gleif
+   :cite/row-kind :definition
+   :cite/url "https://api.gleif.org/api/v1/lei-records/254900BHOU40CFNXWQ75"
+   :cite/expect-substring "\"id\":\"HZEH\""
+   :cite/claim "The LLC's legal form is HZEH (Delaware limited liability company), not XTIQ."}
+  {:cite/id "llc-gleif-hq-street"
+   :cite/authority :gleif
+   :cite/row-kind :definition
+   :cite/url "https://api.gleif.org/api/v1/lei-records/254900BHOU40CFNXWQ75"
+   :cite/expect-substring "\"addressLines\":[\"2 WELLS AVENUE\"]"
+   :cite/claim "The LLC's headquarters is the same 2 WELLS AVENUE (row gleif-hq-street) -- same building, different legal person."}
+  {:cite/id "llc-gleif-same-lou"
+   :cite/authority :gleif
+   :cite/row-kind :definition
+   :cite/url "https://api.gleif.org/api/v1/lei-records/254900BHOU40CFNXWQ75"
+   :cite/expect-substring "\"managingLou\":\"5493001KJTIIGC8Y1R12\""
+   :cite/claim "Both records are managed by the same LOU (row gleif-managing-lou), which nevertheless has not linked them."}
+  {:cite/id "llc-gleif-parent-exception-no-lei"
+   :cite/authority :gleif
+   :cite/row-kind :definition
+   :cite/url "https://api.gleif.org/api/v1/lei-records/254900BHOU40CFNXWQ75/direct-parent-reporting-exception"
+   :cite/expect-substring "\"reason\":\"NO_LEI\""
+   :cite/claim "The LLC's direct-parent exception reads NO_LEI -- stale since 2025-12-10, when its parent obtained LEI 2549009BKSVTM7UEYT38 (row gleif-initial-registration). This row goes red the day GLEIF records the relationship; that is the intended outcome."}
+
+  ;; ── SEC EDGAR, the submissions API ────────────────────────────────────
+  {:cite/id "sec-cik"
+   :cite/authority :sec
+   :cite/row-kind :identity
+   :cite/url "https://data.sec.gov/submissions/CIK0001437578.json"
+   :cite/expect-substring "\"cik\":\"0001437578\""
+   :cite/claim "EDGAR CIK 0001437578 -- the SEC's key for this filer."}
+  {:cite/id "sec-name"
+   :cite/authority :sec
+   :cite/row-kind :identity
+   :cite/url "https://data.sec.gov/submissions/CIK0001437578.json"
+   :cite/expect-substring "\"name\":\"BRIGHT HORIZONS FAMILY SOLUTIONS INC.\""
+   :cite/claim "EDGAR's filer name is the identical string GLEIF records (row gleif-legal-name) -- the attribute that links CIK to LEI in the absence of a key (row sec-lei-null)."}
+  {:cite/id "sec-lei-null"
+   :cite/authority :sec
+   :cite/row-kind :attribute
+   :cite/url "https://data.sec.gov/submissions/CIK0001437578.json"
+   :cite/expect-substring "\"lei\":null"
+   :cite/claim "EDGAR does not carry the LEI for this filer. When it does, this row goes red and a direct-key row should replace it."}
+  {:cite/id "sec-state-of-inc-empty"
+   :cite/authority :sec
+   :cite/row-kind :attribute
+   :cite/url "https://data.sec.gov/submissions/CIK0001437578.json"
+   :cite/expect-substring "\"stateOfIncorporation\":\"\""
+   :cite/claim "EDGAR's submissions API has an EMPTY stateOfIncorporation for this filer -- it cannot corroborate GLEIF's US-DE. The 10-K cover page can (row sec-10k-inc-state-value). Recorded so the absence is not read as disagreement."}
+  {:cite/id "sec-tickers"
+   :cite/authority :sec
+   :cite/row-kind :attribute
+   :cite/url "https://data.sec.gov/submissions/CIK0001437578.json"
+   :cite/expect-substring "\"tickers\":[\"BFAM\"]"
+   :cite/claim "Ticker BFAM -- matching blueprint.edn and the 10-K cover (row sec-10k-ticker)."}
+  {:cite/id "sec-exchange"
+   :cite/authority :sec
+   :cite/row-kind :attribute
+   :cite/url "https://data.sec.gov/submissions/CIK0001437578.json"
+   :cite/expect-substring "\"exchanges\":[\"NYSE\"]"
+   :cite/claim "Listed on the NYSE."}
+  {:cite/id "sec-ein"
+   :cite/authority :sec
+   :cite/row-kind :identity
+   :cite/url "https://data.sec.gov/submissions/CIK0001437578.json"
+   :cite/expect-substring "\"ein\":\"800188269\""
+   :cite/claim "Employer Identification Number 80-0188269 (printed without hyphen). The 10-K cover prints it with one (row sec-10k-ein) -- same key, two formats."}
+  {:cite/id "sec-category"
+   :cite/authority :sec
+   :cite/row-kind :attribute
+   :cite/url "https://data.sec.gov/submissions/CIK0001437578.json"
+   :cite/expect-substring "\"category\":\"Large accelerated filer\""
+   :cite/claim "Filer category Large accelerated filer."}
+  {:cite/id "sec-sic"
+   :cite/authority :sec
+   :cite/row-kind :attribute
+   :cite/url "https://data.sec.gov/submissions/CIK0001437578.json"
+   :cite/expect-substring "\"sic\":\"8351\""
+   :cite/claim "SIC 8351."}
+  {:cite/id "sec-sic-description"
+   :cite/authority :sec
+   :cite/row-kind :attribute
+   :cite/url "https://data.sec.gov/submissions/CIK0001437578.json"
+   :cite/expect-substring "\"sicDescription\":\"Services-Child Day Care Services\""
+   :cite/claim "SIC 8351 is Services-Child Day Care Services -- the industry of the archived Terms of Use."}
+  {:cite/id "sec-entity-type"
+   :cite/authority :sec
+   :cite/row-kind :attribute
+   :cite/url "https://data.sec.gov/submissions/CIK0001437578.json"
+   :cite/expect-substring "\"entityType\":\"operating\""
+   :cite/claim "Entity type operating."}
+  {:cite/id "sec-fiscal-year-end"
+   :cite/authority :sec
+   :cite/row-kind :attribute
+   :cite/url "https://data.sec.gov/submissions/CIK0001437578.json"
+   :cite/expect-substring "\"fiscalYearEnd\":\"1231\""
+   :cite/claim "Fiscal year ends 12-31."}
+  {:cite/id "sec-former-name-2008"
+   :cite/authority :sec
+   :cite/row-kind :attribute
+   :cite/url "https://data.sec.gov/submissions/CIK0001437578.json"
+   :cite/expect-substring "\"name\":\"BRIGHT HORIZONS SOLUTIONS CORP\""
+   :cite/claim "EDGAR's one former name, BRIGHT HORIZONS SOLUTIONS CORP, dated 2008-06-11 -- a month after GLEIF's creationDate 2008-05-09 (row gleif-creation-date). GLEIF carries no name history for this record (row gleif-other-names-empty)."}
+  {:cite/id "sec-street"
+   :cite/authority :sec
+   :cite/row-kind :attribute
+   :cite/url "https://data.sec.gov/submissions/CIK0001437578.json"
+   :cite/expect-substring "\"street1\":\"2 WELLS AVENUE\""
+   :cite/claim "Business and mailing street 2 WELLS AVENUE -- GLEIF's headquarters street (row gleif-hq-street)."}
+  {:cite/id "sec-city"
+   :cite/authority :sec
+   :cite/row-kind :attribute
+   :cite/url "https://data.sec.gov/submissions/CIK0001437578.json"
+   :cite/expect-substring "\"city\":\"NEWTON\""
+   :cite/claim "Business city NEWTON."}
+  {:cite/id "sec-state"
+   :cite/authority :sec
+   :cite/row-kind :attribute
+   :cite/url "https://data.sec.gov/submissions/CIK0001437578.json"
+   :cite/expect-substring "\"stateOrCountry\":\"MA\""
+   :cite/claim "Business state MA -- GLEIF's headquarters region US-MA (row gleif-hq-region)."}
+  {:cite/id "sec-zip"
+   :cite/authority :sec
+   :cite/row-kind :attribute
+   :cite/url "https://data.sec.gov/submissions/CIK0001437578.json"
+   :cite/expect-substring "\"zipCode\":\"02459\""
+   :cite/claim "Business ZIP 02459."}
+
+  ;; ── SEC EDGAR, the company-tickers file and XBRL facts ────────────────
+  {:cite/id "sec-tickers-file-cik"
+   :cite/authority :sec
+   :cite/row-kind :identity
+   :cite/url "https://www.sec.gov/files/company_tickers.json"
+   :cite/expect-substring "\"cik_str\":1437578"
+   :cite/claim "The SEC's ticker file maps CIK 1437578 -- a second SEC surface naming the same key."}
+  {:cite/id "sec-tickers-file-symbol"
+   :cite/authority :sec
+   :cite/row-kind :attribute
+   :cite/url "https://www.sec.gov/files/company_tickers.json"
+   :cite/expect-substring "\"ticker\":\"BFAM\""
+   :cite/claim "The ticker file carries BFAM."}
+  {:cite/id "sec-xbrl-entity-name"
+   :cite/authority :sec
+   :cite/row-kind :identity
+   :cite/url "https://data.sec.gov/api/xbrl/companyfacts/CIK0001437578.json"
+   :cite/expect-substring "\"entityName\":\"BRIGHT HORIZONS FAMILY SOLUTIONS INC.\""
+   :cite/claim "The XBRL companyfacts API names the same entity for the same CIK."}
+  {:cite/id "sec-xbrl-public-float"
+   :cite/authority :sec
+   :cite/row-kind :attribute
+   :cite/url "https://data.sec.gov/api/xbrl/companyfacts/CIK0001437578.json"
+   :cite/expect-substring "\"EntityPublicFloat\""
+   :cite/claim "The filer reports dei:EntityPublicFloat -- a public-float disclosure that only an exchange-listed registrant makes (the value itself is not pinned; it changes every 10-K)."}
+
+  ;; ── SEC EDGAR, the FY2025 Form 10-K inline-XBRL cover page ────────────
+  {:cite/id "sec-10k-registrant"
+   :cite/authority :sec
+   :cite/row-kind :identity
+   :cite/url "https://www.sec.gov/Archives/edgar/data/1437578/000143757826000006/bfam-20251231.htm"
+   :cite/expect-substring ">BRIGHT HORIZONS FAMILY SOLUTIONS INC.</ix:nonNumeric>"
+   :cite/claim "The 10-K cover tags dei:EntityRegistrantName with the same string GLEIF records."}
+  {:cite/id "sec-10k-inc-state-tag"
+   :cite/authority :sec
+   :cite/row-kind :attribute
+   :cite/url "https://www.sec.gov/Archives/edgar/data/1437578/000143757826000006/bfam-20251231.htm"
+   :cite/expect-substring "name=\"dei:EntityIncorporationStateCountryCode\""
+   :cite/claim "The cover page tags the state of incorporation (the submissions API leaves it blank, row sec-state-of-inc-empty)."}
+  {:cite/id "sec-10k-inc-state-value"
+   :cite/authority :sec
+   :cite/row-kind :attribute
+   :cite/url "https://www.sec.gov/Archives/edgar/data/1437578/000143757826000006/bfam-20251231.htm"
+   :cite/expect-substring ">Delaware</ix:nonNumeric>"
+   :cite/claim "State of incorporation Delaware -- the SEC-side corroboration of GLEIF's US-DE (row gleif-jurisdiction) and XTIQ (row elf-xtiq-subdivision)."}
+  {:cite/id "sec-10k-ein"
+   :cite/authority :sec
+   :cite/row-kind :identity
+   :cite/url "https://www.sec.gov/Archives/edgar/data/1437578/000143757826000006/bfam-20251231.htm"
+   :cite/expect-substring ">80-0188269</ix:nonNumeric>"
+   :cite/claim "EIN 80-0188269 on the cover page (row sec-ein is the same number without the hyphen)."}
+  {:cite/id "sec-10k-file-number"
+   :cite/authority :sec
+   :cite/row-kind :identity
+   :cite/url "https://www.sec.gov/Archives/edgar/data/1437578/000143757826000006/bfam-20251231.htm"
+   :cite/expect-substring ">001-35780</ix:nonNumeric>"
+   :cite/claim "Commission file number 001-35780 -- the Exchange Act registration key, a third SEC identifier alongside CIK and EIN."}
+  {:cite/id "sec-10k-address"
+   :cite/authority :sec
+   :cite/row-kind :attribute
+   :cite/url "https://www.sec.gov/Archives/edgar/data/1437578/000143757826000006/bfam-20251231.htm"
+   :cite/expect-substring ">2 Wells Avenue</ix:nonNumeric>"
+   :cite/claim "dei:EntityAddressAddressLine1 is 2 Wells Avenue."}
+  {:cite/id "sec-10k-ticker"
+   :cite/authority :sec
+   :cite/row-kind :attribute
+   :cite/url "https://www.sec.gov/Archives/edgar/data/1437578/000143757826000006/bfam-20251231.htm"
+   :cite/expect-substring ">BFAM</ix:nonNumeric>"
+   :cite/claim "dei:TradingSymbol BFAM."}
+  {:cite/id "sec-10k-exchange"
+   :cite/authority :sec
+   :cite/row-kind :attribute
+   :cite/url "https://www.sec.gov/Archives/edgar/data/1437578/000143757826000006/bfam-20251231.htm"
+   :cite/expect-substring ">New York Stock Exchange</ix:nonNumeric>"
+   :cite/claim "dei:SecurityExchangeName New York Stock Exchange."}
+  {:cite/id "sec-10k-went-private-2008"
+   :cite/authority :sec
+   :cite/row-kind :attribute
+   :cite/url "https://www.sec.gov/Archives/edgar/data/1437578/000143757826000006/bfam-20251231.htm"
+   :cite/expect-substring "listed on Nasdaq from 1998 to May 2008"
+   :cite/claim "The 10-K narrates: listed on Nasdaq from 1998 to May 2008 when acquired and taken private -- the month GLEIF dates the entity's creation (row gleif-creation-date) and the year the LLC already existed in (row llc-gleif-creation-date)."}
+  {:cite/id "sec-10k-ipo-nyse"
+   :cite/authority :sec
+   :cite/row-kind :attribute
+   :cite/url "https://www.sec.gov/Archives/edgar/data/1437578/000143757826000006/bfam-20251231.htm"
+   :cite/expect-substring "our common stock became listed on the New York S"
+   :cite/claim "The 10-K narrates the 2013-01-30 IPO onto the NYSE (substring cut before the exchange's closing quote mark, which is an HTML entity)."}
+  {:cite/id "sec-10k-llc-subsidiary"
+   :cite/authority :sec
+   :cite/row-kind :attribute
+   :cite/url "https://www.sec.gov/Archives/edgar/data/1437578/000143757826000006/bfam-20251231.htm"
+   :cite/expect-substring "Bright Horizons Family Solutions LLC (the Borrower), the Company&#8217;s wholly-owned subsidiary"
+   :cite/claim "The Inc. itself states that Bright Horizons Family Solutions LLC is its wholly-owned subsidiary -- the only register-grade source for the parent/subsidiary edge GLEIF does not record (row llc-gleif-parent-exception-no-lei)."}
+
+  ;; ── Delaware, the register of record (portal only) ────────────────────
+  {:cite/id "delaware-portal"
+   :cite/authority :delaware
+   :cite/row-kind :definition
+   :cite/url "https://corp.delaware.gov/"
+   :cite/expect-substring "Division of Corporations"
+   :cite/claim "The Delaware Division of Corporations portal -- the website GLEIF records for RA000602 (row ra-de-website) -- is reachable. No per-entity URL exists (ICIS is form-gated), so this row proves the register, not the registration."}
+  {:cite/id "delaware-portal-icis"
+   :cite/authority :delaware
+   :cite/row-kind :definition
+   :cite/url "https://corp.delaware.gov/"
+   :cite/expect-substring "icis.corp.delaware.gov"
+   :cite/claim "The portal itself points at icis.corp.delaware.gov, the form-gated entity search where file numbers 4548355 and 2888832 would be resolved by a human."}
+
+  ;; ── The issuer's own web presence ─────────────────────────────────────
+  {:cite/id "issuer-home-title"
+   :cite/authority :issuer
+   :cite/row-kind :attribute
+   :cite/url "https://www.brighthorizons.com/"
+   :cite/expect-substring "<title>Welcome to Bright Horizons | Bright Horizons&reg;</title>"
+   :cite/claim "The home page at the website blueprint.edn records answers with its own title (site.journal.edn archived the same title on 2026-07-18)."}
+  {:cite/id "issuer-home-schema-type"
+   :cite/authority :issuer
+   :cite/row-kind :attribute
+   :cite/url "https://www.brighthorizons.com/"
+   :cite/expect-substring "\"@type\": \"Corporation\""
+   :cite/claim "The home page publishes a schema.org Corporation block."}
+  {:cite/id "issuer-home-legal-name"
+   :cite/authority :issuer
+   :cite/row-kind :identity
+   :cite/url "https://www.brighthorizons.com/"
+   :cite/expect-substring "\"legalName\": \"Bright Horizons Family Solutions Inc.\""
+   :cite/claim "The issuer names itself Bright Horizons Family Solutions Inc. in schema.org legalName -- the Inc., matching GLEIF and EDGAR (differs from the LLC the Terms of Use name, row issuer-tos-llc-owner)."}
+  {:cite/id "issuer-home-street"
+   :cite/authority :issuer
+   :cite/row-kind :attribute
+   :cite/url "https://www.brighthorizons.com/"
+   :cite/expect-substring "\"streetAddress\": \"2 Wells Avenue\""
+   :cite/claim "The issuer's schema.org PostalAddress street is 2 Wells Avenue."}
+  {:cite/id "issuer-home-locality"
+   :cite/authority :issuer
+   :cite/row-kind :attribute
+   :cite/url "https://www.brighthorizons.com/"
+   :cite/expect-substring "\"addressLocality\": \"Newton\""
+   :cite/claim "Locality Newton."}
+  {:cite/id "issuer-home-region"
+   :cite/authority :issuer
+   :cite/row-kind :attribute
+   :cite/url "https://www.brighthorizons.com/"
+   :cite/expect-substring "\"addressRegion\": \"MA\""
+   :cite/claim "Region MA."}
+  {:cite/id "issuer-home-postal"
+   :cite/authority :issuer
+   :cite/row-kind :attribute
+   :cite/url "https://www.brighthorizons.com/"
+   :cite/expect-substring "\"postalCode\": \"02459\""
+   :cite/claim "Postal code 02459 -- four sources (GLEIF hq, EDGAR, 10-K, issuer) now agree on one headquarters address."}
+  {:cite/id "issuer-home-telephone"
+   :cite/authority :issuer
+   :cite/row-kind :attribute
+   :cite/url "https://www.brighthorizons.com/"
+   :cite/expect-substring "\"telephone\": \"+1-617-673-8000\""
+   :cite/claim "Telephone +1-617-673-8000 -- the value blueprint.edn's :company/phone was read from (profile-note: GET only, 2026-08-04)."}
+  {:cite/id "issuer-tos-page"
+   :cite/authority :issuer
+   :cite/row-kind :attribute
+   :cite/url "https://www.brighthorizons.com/about/terms/about/terms-use"
+   :cite/expect-substring "<title>Terms of Use | Bright Horizons&reg;</title>"
+   :cite/claim "The exact :tos/source-url archived in 80-data/public/tos.journal.edn (retrieved 2026-07-10) still serves a Terms of Use page."}
+  {:cite/id "issuer-tos-llc-owner"
+   :cite/authority :issuer
+   :cite/row-kind :attribute
+   :cite/url "https://www.brighthorizons.com/about/terms/about/terms-use"
+   :cite/expect-substring "owned or controlled by Bright Horizons Family Solutions LLC"
+   :cite/claim "The Terms of Use say the site content is owned or controlled by Bright Horizons Family Solutions LLC -- the subsidiary (rows llc-gleif-*), not the listed Inc. this repository is keyed on. The archive is of the parent's published terms, authored in the subsidiary's name."}
+  ]}
