@@ -1,0 +1,27 @@
+;; facts.edn — GLEIF LEI レコードから取り込んだ法人レベルの事実。
+;; 生成物: scripts/lei-gleif-ingest.cljs（手編集しない）。
+;; 出典 https://api.gleif.org/api/v1/lei-records/2549009BKSVTM7UEYT38 を 2026-08-25 に GET（HTTP 200）。応答本文の sha256 を同梱。
+;; fact/conflict は blueprint.edn の既存値と食い違った key。どちらも消していない。
+[["gleif-2549009bksvtm7ueyt38" "company/lei" "2549009BKSVTM7UEYT38" 1 :add]
+ ["gleif-2549009bksvtm7ueyt38" "fact/source-url" "https://api.gleif.org/api/v1/lei-records/2549009BKSVTM7UEYT38" 1 :add]
+ ["gleif-2549009bksvtm7ueyt38" "fact/retrieved-at" "2026-08-25" 1 :add]
+ ["gleif-2549009bksvtm7ueyt38" "fact/response-sha256" "7adbf4dff1fb9360ccc0ac4dfafef70450a26478e8e753d1347b1550e0345273" 1 :add]
+ ["gleif-2549009bksvtm7ueyt38" "source/dataset" "cloud-itonami-lei-gleif" 1 :add]
+ ["gleif-2549009bksvtm7ueyt38" "gleif/legal-name" "BRIGHT HORIZONS FAMILY SOLUTIONS INC." 1 :add]
+ ["gleif-2549009bksvtm7ueyt38" "gleif/legal-address" "C/O CORPORATION SERVICE COMPANY, 251 LITTLE FALLS DRIVE, 19808, WILMINGTON, US-DE, US" 1 :add]
+ ["gleif-2549009bksvtm7ueyt38" "gleif/headquarters-address" "2 Wells Avenue, 02459, Newton, US-MA, US" 1 :add]
+ ["gleif-2549009bksvtm7ueyt38" "gleif/registered-as" "4548355" 1 :add]
+ ["gleif-2549009bksvtm7ueyt38" "gleif/registration-authority" "RA000602" 1 :add]
+ ["gleif-2549009bksvtm7ueyt38" "gleif/jurisdiction" "US-DE" 1 :add]
+ ["gleif-2549009bksvtm7ueyt38" "gleif/category" "GENERAL" 1 :add]
+ ["gleif-2549009bksvtm7ueyt38" "gleif/legal-form-elf" "XTIQ" 1 :add]
+ ["gleif-2549009bksvtm7ueyt38" "gleif/entity-status" "ACTIVE" 1 :add]
+ ["gleif-2549009bksvtm7ueyt38" "gleif/entity-creation-date" "2008-05-09T00:00:00Z" 1 :add]
+ ["gleif-2549009bksvtm7ueyt38" "gleif/registration-status" "ISSUED" 1 :add]
+ ["gleif-2549009bksvtm7ueyt38" "gleif/initial-registration-date" "2025-12-10T16:35:25Z" 1 :add]
+ ["gleif-2549009bksvtm7ueyt38" "gleif/last-update-date" "2025-12-10T16:35:25Z" 1 :add]
+ ["gleif-2549009bksvtm7ueyt38" "gleif/next-renewal-date" "2026-12-10T16:35:25Z" 1 :add]
+ ["gleif-2549009bksvtm7ueyt38" "gleif/managing-lou" "5493001KJTIIGC8Y1R12" 1 :add]
+ ["gleif-2549009bksvtm7ueyt38" "gleif/corroboration-level" "FULLY_CORROBORATED" 1 :add]
+ ["gleif-2549009bksvtm7ueyt38" "fact/conflict" ":company/postal-address: blueprint=\"2 Wells Avenue, Newton, MA, 02459, US\" gleif=\"2 Wells Avenue, 02459, Newton, US-MA, US\"" 1 :add]
+ ["gleif-2549009bksvtm7ueyt38" "fact/conflict" ":company/jurisdiction: blueprint=\"US-MA\" gleif=\"US-DE\"" 1 :add]]
