@@ -39,7 +39,7 @@ company's behalf, and is not a governed Advisor/Governor actor.
   (LEI `254900BHOU40CFNXWQ75`, a 1998 Delaware LLC), not the listed Inc., and GLEIF's
   LLC record still reports its parent as `NO_LEI` although the Inc. has held this LEI
   since 2025-12-10 — the parent/subsidiary edge exists only in the 10-K.
-- `tools/verify_citations.cljs` — live gate over the catalog: every `:cite/url` must
+- `tools/verify_citations.cljk` — live gate over the catalog: every `:cite/url` must
   answer 2xx and carry `:cite/expect-substring`. Exit 0 = all rows verified,
   1 = at least one DRIFT (named), 2 = could not answer (parse / network / floor /
   sec.gov rows not asked). SEC EDGAR requires a User-Agent naming the requester, so
@@ -47,9 +47,9 @@ company's behalf, and is not a governed Advisor/Governor actor.
   are reported `UNCHECKED` and the run exits 2, not 0.
 
 ```bash
-EDGAR_CONTACT=you@example.org nbb tools/verify_citations.cljs facts/catalog.edn --min 20
+EDGAR_CONTACT=you@example.org nbb tools/verify_citations.cljk facts/catalog.edn --min 20
 # CHECKED 96 OK 96 FAIL 0 UNCHECKED 0 → PASS, exit 0        (measured 2026-08-22)
-nbb tools/verify_citations.cljs facts/catalog.edn --min 20
+nbb tools/verify_citations.cljk facts/catalog.edn --min 20
 # CHECKED 64 OK 64 ... UNCHECKED 32 → UNANSWERED, exit 2     (sec.gov not asked)
 ```
 
