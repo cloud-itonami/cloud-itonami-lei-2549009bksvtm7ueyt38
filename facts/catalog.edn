@@ -114,7 +114,7 @@
 ;;   :attribute  -- a fact about the entity, corroborating but not identifying
 ;;   :definition -- the register/code/authority exists and is what GLEIF says
 ;;
-;; Run the gate:   nbb tools/verify_citations.cljk facts/catalog.edn --min 20
+;; Run the gate:   kbb --backend sci tools/verify_citations.cljk facts/catalog.edn --min 20
 
 {:catalog/entity-lei "2549009BKSVTM7UEYT38"
  :catalog/entity-name "BRIGHT HORIZONS FAMILY SOLUTIONS INC."

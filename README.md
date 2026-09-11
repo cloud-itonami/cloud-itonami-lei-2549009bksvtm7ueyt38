@@ -47,9 +47,9 @@ company's behalf, and is not a governed Advisor/Governor actor.
   are reported `UNCHECKED` and the run exits 2, not 0.
 
 ```bash
-EDGAR_CONTACT=you@example.org nbb tools/verify_citations.cljk facts/catalog.edn --min 20
+EDGAR_CONTACT=you@example.org kbb --backend sci tools/verify_citations.cljk facts/catalog.edn --min 20
 # CHECKED 96 OK 96 FAIL 0 UNCHECKED 0 → PASS, exit 0        (measured 2026-08-22)
-nbb tools/verify_citations.cljk facts/catalog.edn --min 20
+kbb --backend sci tools/verify_citations.cljk facts/catalog.edn --min 20
 # CHECKED 64 OK 64 ... UNCHECKED 32 → UNANSWERED, exit 2     (sec.gov not asked)
 ```
 
